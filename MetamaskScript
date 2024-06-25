@@ -1,0 +1,43 @@
+npm install -g create-react-app
+npx create-react-app metamask-connect
+cd metamask-connect
+npm install web3
+
+//Metamask connection
+import React, { useState } from 'react';
+import Web3 from 'web3';
+
+function App() {
+    const [account, setAccount] = useState('');
+
+    const connectMetaMask = async () => {
+        if (window.ethereum) {
+            try {
+                // Request account access if needed
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+                // We initialize web3 using MetaMask's provider
+                const web3 = new Web3(window.ethereum);
+
+                // Get the user's accounts
+                const accounts = await web3.eth.getAccounts();
+
+                // Set the first account as the connected account
+                setAccount(accounts[0]);
+            } catch (error) {
+                console.error("User denied account access or an error occurred:", error);
+            }
+        } else {
+            alert('Please install MetaMask!');
+        }
+    };
+
+    return (
+        <div style={{ textAlign: 'center', marginTop: '50px' }}>
+            <button onClick={connectMetaMask}>Connect MetaMask</button>
+            {account && <p>Connected Account: {account}</p>}
+        </div>
+    );
+}
+
+export default App;
